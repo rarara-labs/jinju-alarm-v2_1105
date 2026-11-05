@@ -1,0 +1,544 @@
+{
+  "_ports": {
+    "namhaeseomyeonNX0_12": "Input Power Failure",
+    "sanchung-wonri2-NX2_12": "Input Power Failure",
+    "sanchung-wonri2-NX2_32": "Input Power Failure",
+    "hapcheon-ssangbaek2-NX0_00": "Link Failure",
+    "jinju-hadae-DA6_01": "FRU General Problem",
+    "hapcheon-hapcheon-DA2_07": "FRU General Problem",
+    "kn-geochang-jusang-GX08_02": "HW Partial Fault",
+    "kn-sanchung-gemuseo-GX08_04": "Input Power Failure",
+    "kn-sanchung-gemuseo-GX08_03": "Input Power Failure",
+    "kn-Jinju-munsan3-GX01_00": "Link Failure",
+    "kn-Jinju-munsan3-GX01_03": "Link Failure",
+    "sanchung3DNX01_01": "Input Power Failure",
+    "kn-uiryeong-uiryeong-GX11_04": "FRU General Problem",
+    "jinju-hadae-TB2_06": "FRU General Problem",
+    "kn-Jinju-munsan3-GX11_01": "Link Failure",
+    "kn-Jinju-munsan3-GX11_00": "Link Failure",
+    "gwangyangohsaNX0_14": "Link Failure",
+    "hamyangjigok3DC0_08": "Link Failure",
+    "kn-hamyang-gyosan-GX05_08": "FRU General Problem",
+    "kn-hamyang-gunja-GX03_03": "Link Failure",
+    "sancheong-samjang-NX0_00": "Cell Service Available Auto Recovery Successful Alert, Cell Service Unavailable Auto Recovery Initiated Alert, HW Partial Fault, PLMN Service Redundancy Lost, VSWR Over Threshold"
+  },
+  "2026-01-09": {
+    "kn-Jinju-munsan3-GX05_00": "Link Failure"
+  },
+  "2026-01-12": {
+    "kn-jinju-geumsan-GX10_02": "Link Failure",
+    "kn-jinju-geumsan-GX10_03": "Link Failure"
+  },
+  "2026-01-14": {
+    "kn-Jinju-daegok2-GX03_00": "Link Failure"
+  },
+  "2026-01-20": {
+    "kn-sanchung-geumseo-GX03_08": "Link Failure",
+    "kn-namhae-namyun3-GX03_00": "Link Failure"
+  },
+  "2026-01-28": {
+    "kn-geochang-gabuk2-GX03_01": "Link Failure",
+    "kn-uiryeong-daeui-GX05_00": "Link Failure"
+  },
+  "2026-01-29": {
+    "kn-hamyang-gyosan-GX01_02": "Link Failure"
+  },
+  "2026-01-30": {
+    "kn-geochang-buksang2-GX09_00": "Link Failure"
+  },
+  "2026-02-02": {
+    "kn-jinju-insa-20-06_06": "Link Failure"
+  },
+  "2026-02-03": {
+    "kn-Jinju-yiban-GX07_00": "Link Failure",
+    "kn-jinju-insa-20-06_06": "Link Failure",
+    "kn-geochang-buksang2-GX09_00": "Link Failure"
+  },
+  "2026-02-05": {
+    "kn-jinju-insa-20-06_06": "Link Failure",
+    "kn-uiryeong-daeui-GX05_00": "Link Failure"
+  },
+  "2026-02-06": {
+    "kn-jinju-naedong-GX05_04": "Link Failure",
+    "kn-jinju-naedong-GX05_05": "Link Failure"
+  },
+  "2026-02-09": {
+    "kn-hamyang-gyosan-GX04_03": "Link Failure"
+  },
+  "2026-02-10": {
+    "kn-uiryeong-daeui-GX05_00": "Link Failure"
+  },
+  "2026-02-23": {
+    "kn-hapcheon-janggye-GX06_03": "Link Failure",
+    "kn-hapcheon-janggye-GX06_02": "Link Failure",
+    "kn-hamyang-hyucheon3-GX03_00": "Link Failure"
+  },
+  "2026-02-24": {
+    "kn-sacheon-sanam-GX04_00": "Link Failure"
+  },
+  "2026-02-25": {
+    "kn-geochang-sinwon3-GX06_00": "Link Failure",
+    "kn-sacheon-donggeum-GX03_05": "Link Failure"
+  },
+  "2026-02-26": {
+    "kn-sacheon-donggeum-GX19_01": "Link Failure"
+  },
+  "2026-02-27": {
+    "kn-geochang-buksang2-GX09_01": "Link Failure",
+    "kn-geochang-buksang2-GX09_00": "Link Failure"
+  },
+  "2026-03-04": {
+    "kn-hadong-gojeon-GX13_04": "Link Failure",
+    "kn-geochang-gabuk2-GX03_01": "Link Failure"
+  },
+  "2026-03-05": {
+    "kn-uiryeong-uiryeong-GX21_00": "Link Failure",
+    "kn-hapcheon-hapcheon-GX11_05": "Link Failure"
+  },
+  "2026-03-06": {
+    "kn-hadong-gojeon-GX13_04": "Link Failure",
+    "kn-Jinju-hotan-GX27_04": "Link Failure"
+  },
+  "2026-03-17": {
+    "kn-Jinju-yiban-GX07_00": "Link Failure",
+    "kn-sanchung-gemuseo-GX06_01": "Link Failure"
+  },
+  "2026-03-19": {
+    "kn-namhae-seomyun-GX02_01": "Link Failure"
+  },
+  "2026-04-02": {
+    "kn-geochang-buksang-10-01_05": "Link Failure"
+  },
+  "2026-04-06": {
+    "kn-jinju-hadae-GX05_05": "Link Failure"
+  },
+  "2026-04-07": {
+    "kn-sacheon-gonmyeong4W-GX08_05": "Link Failure",
+    "kn-sacheon-gonmyeong4W-GX08_04": "Link Failure",
+    "kn-hamyang-gunja-GX04_04": "Link Failure",
+    "kn-hamyang-gyosan-GX07_07": "Link Failure"
+  },
+  "2026-04-10": {
+    "kn-hadong-gojeon-GX13_04": "Link Failure",
+    "kn-hadong-gojeon-GX13_05": "Link Failure"
+  },
+  "2026-04-15": {
+    "kn-hamyang-gyosan-GX22_06": "Link Failure"
+  },
+  "2026-04-21": {
+    "kn-hadong-gojeon-GX07_03": "Link Failure",
+    "kn-hadong-gojeon-GX07_02": "Link Failure"
+  },
+  "2026-04-22": {
+    "kn-Jinju-yiban-GX03_01": "Link Failure",
+    "kn-Jinju-yiban-GX03_00": "Link Failure",
+    "kn-sacheon-donggeum-GX07_01": "Link Failure"
+  },
+  "2026-04-23": {
+    "kn-hamyang-aneui2-GX04_01": "Link Failure"
+  },
+  "2026-04-29": {
+    "kn-sacheon-jeongeui2-GX17_07": "Link Failure",
+    "kn-sacheon-jeongeui2-GX17_08": "Link Failure"
+  },
+  "2026-05-15": {
+    "kn-hadong-yangbo-GX06_05": "Link Failure"
+  },
+  "2026-05-20": {
+    "kn-sancheong-sicheon-10-01_05": "Link Failure"
+  },
+  "2026-05-21": {
+    "kn-sancheong-sicheon-10-01_05": "Link Failure"
+  },
+  "2026-05-22": {
+    "kn-sancheong-sicheon-10-01_05": "Link Failure",
+    "kn-Jinju-hotan-GX21_06": "Link Failure",
+    "kn-hamyang-sudong2-GX01_01": "Link Failure"
+  },
+  "2026-05-26": {
+    "kn-sancheong-sicheon-10-01_05": "Link Failure",
+    "kn-geochang-sinwon2-GX10_00": "Link Failure"
+  },
+  "2026-05-27": {
+    "kn-jinju-hadae-GX33_00": "Link Failure",
+    "kn-hadong-hwagae-GX01_01": "Link Failure"
+  },
+  "2026-05-28": {
+    "kn-sancheong-sicheon-10-01_05": "Link Failure",
+    "kn-Jinju-hotan-GX13_06": "Link Failure",
+    "kn-Jinju-hotan-GX13_05": "Link Failure"
+  },
+  "2026-05-29": {
+    "kn-sancheong-sicheon-10-01_05": "Link Failure"
+  },
+  "2026-06-01": {
+    "kn-namhae-changsun4-GX02_00": "Link Failure",
+    "kn-namhae-changsun4-GX02_01": "Link Failure",
+    "kn-hadong-jingyo-GX02_05": "Link Failure",
+    "kn-hadong-jingyo-GX01_00": "Link Failure"
+  },
+  "2026-06-02": {
+    "kn-hadong-okjong2-GX11_01": "Link Failure",
+    "kn-hadong-okjong2-GX11_00": "Link Failure"
+  },
+  "2026-06-09": {
+    "kn-sancheong-sicheon-10-01_03": "Link Failure"
+  },
+  "2026-06-10": {
+    "kn-Jinju-hotan-GX21_06": "Link Failure"
+  },
+  "2026-06-11": {
+    "kn-sacheon-donggeum-GX15_08": "Link Failure",
+    "kn-sacheon-donggeum-GX15_04": "Link Failure",
+    "kn-hamyang-sudong2-GX04_04": "Link Failure"
+  },
+  "2026-06-12": {
+    "kn-Jinju-hotan-GX21_06": "Link Failure"
+  },
+  "2026-06-17": {
+    "kn-hapcheon-ssangbaek2-GX06_04": "Link Failure"
+  },
+  "2026-06-19": {
+    "kn-jinju-hadae-GX33_00": "Link Failure",
+    "kn-hapcheon-ssangbaek2-GX06_04": "Link Failure",
+    "kn-hamyang-sudong2-GX04_04": "Link Failure"
+  },
+  "2026-06-22": {
+    "kn-jinju-hadae-GX33_00": "Link Failure",
+    "kn-geochang-namsang4-GX02_00": "Link Failure",
+    "kn-hapcheon-ssangbaek2-GX06_04": "Link Failure",
+    "kn-hapcheon-yongju-GX15_03": "Link Failure",
+    "kn-Jinju-hotan-GX04_04": "Link Failure",
+    "kn-Jinju-hotan-GX21_06": "Link Failure"
+  },
+  "2026-06-23": {
+    "kn-hapcheon-ssangbaek2-GX06_04": "Link Failure",
+    "kn-geochang-namsang4-GX02_00": "Link Failure"
+  },
+  "2026-06-24": {
+    "kn-uiryeong-bongsu2GX03_03": "Link Failure",
+    "kn-Jinju-hotan-GX21_06": "Link Failure"
+  },
+  "2026-06-25": {
+    "kn-uiryeong-bongsu2GX03_03": "Link Failure"
+  },
+  "2026-06-26": {
+    "kn-Jinju-hotan-GX24_04": "Link Failure",
+    "kn-Jinju-hotan-GX21_00": "Link Failure",
+    "kn-hamyang-sudong2-GX04_04": "Link Failure"
+  },
+  "2026-06-30": {
+    "kn-hadong-gojeon-GX13_06": "Link Failure",
+    "kn-hadong-gojeon-GX13_07": "Link Failure",
+    "kn-Jinju-hotan-GX04_04": "Link Failure"
+  },
+  "2026-07-02": {
+    "kn-Jinju-hotan-GX42_04": "Link Failure",
+    "kn-hapcheon-myosan-GX02_00": "Link Failure",
+    "kn-hapcheon-ssangbaek2-GX06_04": "Link Failure"
+  },
+  "2026-07-03": {
+    "kn-sacheon-jeongeui2-GX07_02": "Link Failure",
+    "kn-Jinju-hotan-GX20_00": "Link Failure",
+    "kn-Jinju-hotan-GX20_01": "Link Failure"
+  },
+  "2026-07-06": {
+    "kn-uiryeong-hwajeong-GX01_01": "Link Failure",
+    "kn-Jinju-hotan-GX20_05": "Link Failure",
+    "kn-uiryeong-jijeongGX15_02": "Link Failure",
+    "kn-uiryeong-nakseoGX01_03": "Link Failure",
+    "kn-uiryeong-nakseoGX01_02": "Link Failure"
+  },
+  "2026-07-08": {
+    "kn-Jinju-hotan-GX13_04": "Link Failure",
+    "kn-uiryeong-bongsu2GX03_03": "Link Failure"
+  },
+  "2026-07-09": {
+    "kn-sancheong-sicheon-10-01_03": "Link Failure",
+    "kn-geochang-nongsan-GX01_02": "Link Failure",
+    "kn-geochang-nongsan-GX01_03": "Link Failure",
+    "kn-sacheon-gonyang2-GX03_08": "Link Failure",
+    "kn-hamyang-gunja-GX12_00": "Link Failure",
+    "kn-hadong-jingyo-GX02_05": "Link Failure",
+    "kn-hadong-jingyo-GX01_00": "Link Failure"
+  },
+  "2026-07-13": {
+    "kn-jinju-hadae-GX06_08": "Link Failure",
+    "kn-sancheong-sicheon-10-01_03": "Link Failure",
+    "kn-sancheong-sicheon-10-01_02": "Link Failure",
+    "kn-sacheon-donggeum-GX04_00": "Link Failure",
+    "kn-Jinju-hotan-GX29_06": "Link Failure",
+    "kn-Jinju-hotan-GX29_05": "Link Failure"
+  },
+  "2026-07-14": {
+    "kn-sancheong-sicheon-10-01_02": "Link Failure",
+    "kn-jinju-hadae-GX06_08": "Link Failure",
+    "kn-Jinju-hotan-GX20_03": "Link Failure",
+    "kn-Jinju-hotan-GX20_04": "Link Failure",
+    "kn-Jinju-hotan-GX21_08": "Link Failure",
+    "kn-sancheong-sicheon-10-01_03": "Link Failure"
+  },
+  "2026-07-15": {
+    "kn-Jinju-jiphyeon3-GX03_00": "Link Failure"
+  },
+  "2026-07-16": {
+    "kn-Jinju-hotan-GX41_08": "Link Failure"
+  },
+  "2026-07-20": {
+    "kn-Jinju-jiphyeon3-GX01_00": "Link Failure"
+  },
+  "2026-07-23": {
+    "kn-hadong-bukcheon2-GX02_03": "Link Failure"
+  },
+  "2026-07-24": {
+    "kn-jinju-hadae-GX06_08": "Link Failure"
+  },
+  "2026-07-29": {
+    "kn-jinju-hadae-GX06_07": "Link Failure",
+    "kn-jinju-hadae-GX06_08": "Link Failure",
+    "kn-jinju-hadae-GX09_06": "Link Failure",
+    "kn-jinju-hadae-GX09_07": "Link Failure"
+  },
+  "2026-08-03": {
+    "kn-hadong-hoengcheon3-GX05_03": "Link Failure",
+    "kn-hamyang-anui5-GX07_00": "Link Failure",
+    "kn-hapcheon-hapcheon-GX06_04": "Link Failure",
+    "kn-hapcheon-hapcheon-GX06_05": "Link Failure",
+    "kn-jinju-hadae-GX06_07": "Link Failure",
+    "kn-jinju-hadae-GX06_08": "Link Failure",
+    "kn-hadong-jingyo2-GX05_05": "Link Failure"
+  },
+  "2026-08-04": {
+    "kn-jinju-hadae-GX06_08": "Link Failure",
+    "kn-hadong-jingyo2-GX05_05": "Link Failure"
+  },
+  "2026-08-05": {
+    "kn-hadong-jingyo2-GX05_05": "Link Failure",
+    "kn-hamyang-hyoocheon2-GX05_00": "Link Failure",
+    "kn-sanchung-sinan2-GX01_01": "Link Failure"
+  },
+  "2026-08-06": {
+    "kn-hadong-hwagae-GX01_01": "Link Failure",
+    "kn-jinju-hadae-GX06_07": "Link Failure",
+    "kn-jinju-hadae-GX06_08": "Link Failure",
+    "kn-namhae-namyun3-GX02_02": "Link Failure",
+    "kn-hamyang-anui5-GX07_00": "Link Failure"
+  },
+  "2026-08-07": {
+    "kn-hadong-hwagae-GX01_01": "Link Failure",
+    "kn-jinju-insa-GX11_02": "Link Failure",
+    "kn-hamyang-gyosan-GX05_08": "Link Failure",
+    "kn-hamyang-gyosan-GX20_06": "Link Failure"
+  },
+  "2026-08-13": {
+    "kn-hadong-hwagae-GX01_00": "Link Failure",
+    "kn-hadong-hwagae-GX01_01": "Link Failure",
+    "kn-jinju-geumsan-GX01_04": "Link Failure"
+  },
+  "2026-08-18": {
+    "kn-sacheon-sacheon-GX08_06": "Link Failure",
+    "kn-sacheon-sacheon-GX08_07": "Link Failure",
+    "kn-geochang-daepyeong-GX18_03": "Link Failure",
+    "kn-geochang-daepyeong-GX18_04": "Link Failure",
+    "kn-geochang-daepyeong-GX18_02": "Link Failure",
+    "kn-geochang-daepyeong-GX18_01": "Link Failure"
+  },
+  "2026-08-19": {
+    "kn-jinju-insa-20-03_00": "Link Failure",
+    "kn-namhae-changsun-GX04_05": "Link Failure",
+    "kn-hapcheon-daeyang2-GX02_01": "Link Failure",
+    "kn-sanchung-gemuseo-GX06_07": "Link Failure"
+  },
+  "2026-08-20": {
+    "kn-hadong-hoengcheon3-GX05_02": "Link Failure",
+    "kn-hadong-hoengcheon3-GX03_00": "Link Failure",
+    "kn-Jinju-hotan-GX13_04": "Link Failure",
+    "kn-jinju-hadae-GX37_05": "Link Failure"
+  },
+  "2026-08-24": {
+    "kn-hapcheon-myosan2-GX01_03": "Link Failure"
+  },
+  "2026-08-25": {
+    "kn-Jinju-hotan-GX44_07": "Link Failure",
+    "kn-hadong-gojeon-GX05_03": "Link Failure"
+  },
+  "2026-08-26": {
+    "kn-hapcheon-daeyang2-GX02_01": "Link Failure"
+  },
+  "2026-08-27": {
+    "kn-jinju-insa-GX37_02": "Link Failure",
+    "kn-jinju-insa-GX37_08": "Link Failure",
+    "kn-geochang-jusang-GX01_04": "Link Failure"
+  },
+  "2026-08-28": {
+    "kn-hadong-okjong2-GX06_04": "Link Failure",
+    "kn-Jinju-hotan-GX24_02": "Link Failure",
+    "kn-Jinju-hotan-GX24_03": "Link Failure",
+    "kn-Jinju-hotan-GX26_00": "Link Failure",
+    "kn-sancheong-oboo-GX04_00": "Link Failure",
+    "kn-hapcheon-bongsan3-GX03_00": "Link Failure",
+    "kn-hapcheon-daeyang2-GX04_04": "Link Failure",
+    "kn-hapcheon-daeyang2-GX01_02": "Link Failure",
+    "kn-hapcheon-yaro-GX01_02": "Link Failure",
+    "kn-hapcheon-yaro-GX03_01": "Link Failure",
+    "kn-hapcheon-hapcheon-GX06_05": "Link Failure",
+    "kn-hapcheon-hapcheon-GX06_04": "Link Failure",
+    "kn-hapcheon-dunnae2-GX01_02": "Link Failure",
+    "kn-hapcheon-myosan2-GX01_03": "Link Failure"
+  },
+  "2026-08-31": {
+    "kn-hapcheon-maeanGX07_00": "Link Failure",
+    "kn-hapcheon-maeanGX07_01": "Link Failure",
+    "kn-sacheon-gonyangW-GX02_04": "Link Failure",
+    "kn-sacheon-gonyangW-GX05_04": "Link Failure",
+    "kn-sacheon-sachon2W-GX02_01": "Link Failure",
+    "kn-sacheon-sachon2W-GX02_00": "Link Failure",
+    "kn-jinju-jeongchon-GX17_01": "Link Failure"
+  },
+  "2026-09-02": {
+    "kn-hamyang-jigok3-GX01_02": "Link Failure",
+    "kn-hamyang-jigok3-GX02_04": "Link Failure"
+  },
+  "2026-09-03": {
+    "kn-Jinju-hotan-GX06_06": "Link Failure",
+    "kn-Jinju-hotan-GX06_05": "Link Failure"
+  },
+  "2026-09-07": {
+    "kn-jinju-jeongchonW-GX03_01": "Link Failure",
+    "kn-sanchung-GX02_07": "Link Failure",
+    "kn-sanchung-GX02_08": "Link Failure"
+  },
+  "2026-09-08": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure"
+  },
+  "2026-09-10": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure"
+  },
+  "2026-09-11": {
+    "kn-uiryeong-bongsu2GX03_01": "Link Failure",
+    "kn-uiryeong-bongsu2GX03_00": "Link Failure"
+  },
+  "2026-09-15": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure",
+    "kn-sanchung-sindeung-GX01_03": "Link Failure",
+    "kn-sanchung-sindeung-GX01_02": "Link Failure"
+  },
+  "2026-09-16": {
+    "kn-sacheon-sacheon-GX09_08": "Link Failure",
+    "kn-sanchung-sindeung-GX01_03": "Link Failure",
+    "kn-sanchung-sindeung-GX01_02": "Link Failure",
+    "kn-geochang-goje2-GX01_00": "Link Failure",
+    "kn-geochang-goje2-GX01_01": "Link Failure"
+  },
+  "2026-09-17": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure"
+  },
+  "2026-09-21": {
+    "kn-jinju-seongbuk-10-01_01": "Link Failure",
+    "kn-Jinju-yiban-GX04_04": "Link Failure"
+  },
+  "2026-09-22": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure",
+    "kn-uiryeong-yongdeok2GX01_01": "Link Failure",
+    "kn-uiryeong-yongdeok2GX01_00": "Link Failure"
+  },
+  "2026-09-23": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure",
+    "kn-sanchung-sinan2-GX04_00": "Link Failure",
+    "kn-hapcheon-daebyeong-GX04_00": "Link Failure"
+  },
+  "2026-09-28": {
+    "kn-hadong-jingyo-GX10_00": "Link Failure"
+  },
+  "2026-09-29": {
+    "kn-sanchung-sawol-GX01_04": "Link Failure",
+    "kn-sanchung-sawol-GX01_05": "Link Failure",
+    "kn-namhae-changsun2-GX01_02": "Link Failure",
+    "kn-namhae-changsun2-GX01_03": "Link Failure"
+  },
+  "2026-09-30": {
+    "kn-hamyang-macheon-10-01_03": "Link Failure",
+    "kn-hamyang-macheon-10-01_02": "Link Failure",
+    "kn-hamyang-macheon-10-01_01": "Link Failure",
+    "kn-jinju-seongbuk-10-01_01": "Link Failure",
+    "kn-jinju-insa-GX40_01": "Link Failure",
+    "kn-jinju-insa-GX49_04": "Link Failure"
+  },
+  "2026-10-01": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure",
+    "kn-hamyang-macheon-10-01_01": "Link Failure",
+    "kn-jinju-insa-20-03_01": "Link Failure",
+    "kn-jinju-insa-GX40_01": "Link Failure",
+    "kn-jinju-insa-GX49_04": "Link Failure",
+    "kn-jinju-seongbuk-10-01_01": "Link Failure"
+  },
+  "2026-10-06": {
+    "kn-Jinju-yiban-GX04_04": "Link Failure",
+    "kn-hadong-hoengcheon4-GX09_00": "Link Failure"
+  },
+  "2026-10-16": {
+    "kn-Jinju-munsan3-GX11_00": "Link Failure"
+  },
+  "2026-10-19": {
+    "kn-hadong-bukcheon2-GX02_00": "Link Failure",
+    "kn-hamyang-gunja-GX03_03": "Link Failure",
+    "kn-Jinju-munsan3-GX11_00": "Link Failure",
+    "kn-Jinju-munsan3-GX11_01": "Link Failure"
+  },
+  "2026-10-20": {
+    "kn-uiryeong-uiryeong-GX07_02": "Link Failure",
+    "kn-uiryeong-uiryeong-GX07_01": "Link Failure",
+    "kn-namhae-mijo3-GX01_03": "Link Failure"
+  },
+  "2026-10-21": {
+    "kn-sanchung-sinan2-GX07_05": "Link Failure",
+    "kn-sacheon-jeongeui2-GX20_08": "Link Failure",
+    "kn-sacheon-gonyang2W-GX10_08": "Link Failure",
+    "kn-namhae-namyun3-GX01_00": "Link Failure",
+    "kn-hadong-hwagae-GX11_00": "Link Failure",
+    "kn-hadong-hwagae-GX11_01": "Link Failure"
+  },
+  "2026-10-27": {
+    "kn-hadong-hoengcheon4-GX09_00": "Link Failure"
+  },
+  "2026-10-28": {
+    "kn-hadong-hoengcheon4-GX09_00": "Link Failure"
+  },
+  "2026-10-29": {
+    "kn-geochang-mari-GX02_02": "Link Failure",
+    "kn-geochang-mari-GX02_03": "Link Failure",
+    "kn-geochang-mari-GX02_05": "Link Failure",
+    "kn-geochang-mari-GX03_05": "Link Failure"
+  },
+  "2026-10-30": {
+    "kn-Jinju-jiphyeon3-GX04_00": "Link Failure",
+    "kn-Jinju-hotan-GX20_06": "Link Failure"
+  },
+  "2026-11-03": {
+    "kn-geochang-daepyeong-GX01_08": "Link Failure",
+    "kn-Jinju-hotan-GX50_04": "Link Failure"
+  },
+  "2026-11-05": {
+    "namhaeseomyeonNX0_12": "Input Power Failure",
+    "sanchung-wonri2-NX2_12": "Input Power Failure",
+    "sanchung-wonri2-NX2_32": "Input Power Failure",
+    "hapcheon-ssangbaek2-NX0_00": "Link Failure",
+    "jinju-hadae-DA6_01": "FRU General Problem",
+    "hapcheon-hapcheon-DA2_07": "FRU General Problem",
+    "kn-geochang-jusang-GX08_02": "HW Partial Fault",
+    "kn-sanchung-gemuseo-GX08_04": "Input Power Failure",
+    "kn-sanchung-gemuseo-GX08_03": "Input Power Failure",
+    "kn-Jinju-munsan3-GX01_00": "Link Failure",
+    "kn-Jinju-munsan3-GX01_03": "Link Failure",
+    "sanchung3DNX01_01": "Input Power Failure",
+    "kn-uiryeong-uiryeong-GX11_04": "FRU General Problem",
+    "jinju-hadae-TB2_06": "FRU General Problem",
+    "kn-Jinju-munsan3-GX11_01": "Link Failure",
+    "kn-Jinju-munsan3-GX11_00": "Link Failure",
+    "gwangyangohsaNX0_14": "Link Failure",
+    "hamyangjigok3DC0_08": "Link Failure",
+    "kn-hamyang-gyosan-GX05_08": "FRU General Problem",
+    "kn-hamyang-gunja-GX03_03": "Link Failure",
+    "sancheong-samjang-NX0_00": "Cell Service Available Auto Recovery Successful Alert, Cell Service Unavailable Auto Recovery Initiated Alert, HW Partial Fault, PLMN Service Redundancy Lost, VSWR Over Threshold"
+  }
+}
