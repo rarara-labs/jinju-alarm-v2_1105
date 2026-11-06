@@ -1,205 +1,192 @@
-# -*- coding: utf-8 -*-
-"""일일 Excel을 경량 JSON으로 가공하고 날짜별 알람 이력을 비파괴 병합한다.
-Run: python build_data.py
-"""
-import json
-import re
+"""Append-only workbook archives + occurrence history + compact read-only UI snapshot."""
+from __future__ import annotations
+import argparse
 from collections import Counter, defaultdict
+from datetime import datetime
+import gzip
+from hashlib import sha256
+import json
 from pathlib import Path
-from datetime import datetime, date
-import pandas as pd
+import tempfile
+import time
+from zoneinfo import ZoneInfo
+from fault_core import read_workbook, clean, valid_alarm, oos_alarm, FIELDS, dt
 
 ROOT=Path(__file__).resolve().parent
-FILE=ROOT/'data/daily.xlsx'
-OUT=ROOT/'data/processed.json'
-HIST=ROOT/'data/alarm_history.json'
-LEGACY=ROOT/'data/previous_alarm_history.json'  # optional V1 history import
+SOURCE_NAME='26년_진주품질개선팀_고장_RAW_DATA.xlsx'
 
-PRIORITY=['Input Power Failure','Link Failure','No Connection','SW Error','FRU General Problem']
-BAD={'','nan','None','Service Unavailable','NaT','-'}
-
-def clean(v):
-    if v is None: return ''
+def read_json(path,default):
+    if not path.exists():return default
     try:
-        if pd.isna(v): return ''
-    except (TypeError,ValueError): pass
-    if isinstance(v,(pd.Timestamp,datetime,date)): return str(v)[:19]
-    return str(v).strip()
+        content=gzip.decompress(path.read_bytes()) if path.suffix=='.gz' else path.read_bytes()
+        value=json.loads(content)
+    except Exception as exc:raise ValueError(f'기존 저장자료 손상: {path.name}. 덮어쓰지 않습니다.') from exc
+    if not isinstance(value,type(default)):raise ValueError(f'기존 저장자료 형식 오류: {path.name}')
+    return value
 
-def datekey(v):
-    dt=pd.to_datetime(v,errors='coerce')
-    return dt.strftime('%Y-%m-%d') if pd.notna(dt) else ''
+def encode(value,compressed=False):
+    content=json.dumps(value,ensure_ascii=False,separators=(',',':'),allow_nan=False).encode()
+    return gzip.compress(content,mtime=0) if compressed else content
 
-def best_alarm(alarms):
-    al=[a for a in alarms if a and a not in BAD]
-    for kw in PRIORITY:
-        if kw in al:return kw
-    return ', '.join(sorted(set(al))) if al else ''
+def atomic_bytes(path,content):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=path.parent,delete=False) as fp:
+        fp.write(content);temp=Path(fp.name)
+    temp.replace(path)
 
-def load_sheet(excel,name):
-    try:
-        df=pd.read_excel(excel,sheet_name=name)
-        df.columns=df.columns.map(lambda s:str(s).strip())
-        return df.dropna(how='all')
-    except ValueError:
-        print('WARN: Missing sheet:',name)
-        return pd.DataFrame()
+def legacy_history(root):
+    combined={};copies=[];conflicts=0
+    for relative in ['alarm_history.json','data/alarm_history.json','data/previous_alarm_history.json']:
+        path=root/relative
+        if not path.exists():continue
+        data=read_json(path,{})
+        for date,entries in data.items():
+            if not isinstance(entries,dict):raise ValueError(f'구 이력 형식 오류: {relative}/{date}')
+            for port,alarm in entries.items():
+                if not isinstance(alarm,str):raise ValueError(f'구 이력 알람 형식 오류: {relative}')
+                if not valid_alarm(alarm):continue
+                dest=combined.setdefault(date,{})
+                if port in dest and dest[port]!=alarm:conflicts+=1
+                else:dest[port]=alarm
+        copies.append((relative,path.read_bytes()))
+    return combined,copies,conflicts
 
-def rowrecords(df):
-    # Convert every Excel-ish value to JSON-compatible short text.
-    return [{str(k):clean(v) for k,v in r.items()} for r in df.to_dict(orient='records')]
+def choose_source(root):
+    # Existing daily upload path is kept; no moving/renaming workbook required.
+    for relative in [SOURCE_NAME,'data/daily.xlsx']:
+        if (root/relative).is_file():return root/relative
+    raise ValueError(f'엑셀이 없습니다: {SOURCE_NAME} 또는 data/daily.xlsx')
 
-def raw_alarm_mapping(excel):
-    rf_map=defaultdict(set); du_map=defaultdict(set)
-    for name in ['5G Raw','LTE Raw','3G MOD ']:
-        df=load_sheet(excel,name)
-        if df.empty: continue
-        for du,sp,obj in df[['DU','specificProblem','objectOfReference']].itertuples(index=False,name=None):
-            du=clean(du); sp=clean(sp)
-            if not du or sp in BAD: continue
-            du_map[du].add(sp)
-            m=re.search(r'FieldReplaceableUnit=([^,\s]+)',clean(obj))
-            if m:rf_map[(du,m.group(1).strip())].add(sp)
-    cellmap={}
-    # Keep positional mapping compatible with V1. Some AAU exports have
-    # different columns, so mapping falls back to DU match if needed.
-    for sheet in ('AAU PORT_0518','RRU PORT_0518'):
-        df=load_sheet(excel,sheet)
-        if df.empty or len(df.columns)<6:continue
-        for row in df.itertuples(index=False,name=None):
-            du=clean(row[3]); cell=clean(row[4]); rf=clean(row[5])
-            if du and rf and cell and cell not in BAD:
-                cellmap[cell]=(du,rf)
-    return rf_map,du_map,cellmap
+def build(root=ROOT,source=None,revision='',captured_at=None):
+    started=time.perf_counter();root=Path(root);base=root/'data/v3'
+    source=Path(source) if source else choose_source(root)
+    if not source.is_file():raise ValueError(f'입력 엑셀 없음: {source}')
+    captured_at=captured_at or datetime.now(ZoneInfo('Asia/Seoul')).isoformat(timespec='seconds')
+    content=source.read_bytes();digest=sha256(content).hexdigest()
+    raw_store=read_json(base/'raw_events.json.gz',{'schema_version':3,'events':{}})
+    manifest=read_json(base/'manifest.json',{'schema_version':3,'snapshots':[]})
+    store=read_json(base/'events.json.gz',{'schema_version':3,'events':{}})
+    if manifest.get('schema_version')!=3 or store.get('schema_version')!=3:raise ValueError('지원하지 않는 이력 버전')
+    if not isinstance(store.get('events'),dict) or not isinstance(manifest.get('snapshots'),list):raise ValueError('잘못된 누적 이력 구조')
+    # All parsing/validation happens BEFORE touching persistent files.
+    legacy,copies,conflicts=legacy_history(root)
+    book=read_workbook(source,captured_at[:10]);latest=book['latest']
+    if conflicts:book['notes'].append(f'기존 이력 충돌 {conflicts}건. 원본별 보존, 선순위 값 유지.')
+    raw_events=raw_store['events']
+    for row in book['raw_records']:
+        rid=row['raw_id'];old=raw_events.get(rid)
+        if old is None:
+            old=dict(row);old.update({'최초관측일':latest,'최종관측일':latest,'관측일':[]});raw_events[rid]=old
+        old['최초관측일']=min(old['최초관측일'],latest);old['최종관측일']=max(old['최종관측일'],latest)
+        if latest not in old['관측일']:old['관측일'].append(latest);old['관측일'].sort()
+        old['관측일수']=len(old['관측일'])
+    events=store['events'];known=next((s for s in manifest['snapshots'] if s['sha256']==digest),None)
+    sequence=known['sequence'] if known else len(manifest['snapshots'])+1
+    archive_rel=f'archive/workbooks/{latest}/{digest}.xlsx'
+    if known:
+        for field in ['archive_path','observations_path']:
+            if not (root/known[field]).is_file():raise ValueError(f'보관 이력의 파일이 없습니다: {known[field]}')
+        if sha256((root/known['archive_path']).read_bytes()).hexdigest()!=digest:raise ValueError('보관 원본이 손상됐습니다. 덮어쓰지 않습니다.')
+    observation_rel=f'archive/observations/{latest}/{digest}.json.gz'
+    # A legacy day/port mapping is only attached when it identifies one occurrence.
+    legacy_candidates=defaultdict(set)
+    for r in book['rows']:legacy_candidates[(r['기준일'],r['Port'])].add(r['event_id'])
+    now_rows=[]
+    for row in sorted(book['rows'],key=lambda r:(r['기준일'],r['발생시각'])):
+        eid=row['event_id'];reference=row['기준일'];port=row['Port']
+        event=events.get(eid)
+        if event is None:
+            event={'event_id':eid,'시스템':row['시스템'],'Port':port,'발생시각':row['발생시각'],
+                   '최초기준일':reference,'최종기준일':reference,'관측일':[],
+                   '최초확인알람':'','최초알람근거':'','최초알람확인일':'','알람종류':[],
+                   '알람':'','알람근거':'미확인','revision_sequence':0}
+            events[eid]=event
+        alarm,alarm_source=('','미확인')
+        if reference==latest:alarm,alarm_source=book['matcher'].get(port)
+        if not alarm:alarm,alarm_source=oos_alarm(row)
+        if not alarm:
+            old=legacy.get(reference,{}).get(port,'')
+            if old and len(legacy_candidates[(reference,port)])==1:
+                alarm,alarm_source=old,'구이력 날짜/PORT · 발생시각 미검증'
+        # Never reassign a current RAW or port-only legacy alarm to a past occurrence.
+        if alarm:
+            if alarm not in event['알람종류']:event['알람종류'].append(alarm)
+            if not event['최초확인알람']:
+                event['최초확인알람']=alarm;event['최초알람근거']=alarm_source;event['최초알람확인일']=reference
+        if reference not in event['관측일']:event['관측일'].append(reference);event['관측일'].sort()
+        event['최초기준일']=min(event['최초기준일'],reference)
+        if reference>event['최종기준일'] or (reference==event['최종기준일'] and sequence>=event['revision_sequence']):
+            for key in FIELDS:event[key]=clean(row.get(key))
+            event['최종기준일']=reference;event['revision_sequence']=sequence
+            # Missing match is explicit; a previous occurrence-specific value may be retained with its source date.
+            if alarm:event['알람']=alarm;event['알람근거']=alarm_source
+        event['관측일수']=len(event['관측일'])
+        resolved=alarm  # No port-only fallback across occurrences.
+        if not resolved and event.get('최초확인알람'):
+            resolved=event.get('알람') or event['최초확인알람']
+            alarm_source='동일 발생 이력 · 현재 RAW 미확인'
+        observation={key:clean(row.get(key)) for key in FIELDS}
+        observation.update({'event_id':eid,'기준일':reference,'알람':resolved,'알람근거':alarm_source})
+        # Full observations of latest day (including same-day revisions) are immutable.
+        if reference==latest:
+            checked=bool(row.get('고장구분')) and clean(row.get('고장구분')) not in {'nan','None','-'}
+            is_new=(port not in book['previous']) if book['prev'] else None
+            observation.update({'신규':is_new,'점검기재':checked,
+                '현장상태':'점검·조치' if checked else '비교불가' if is_new is None else '신규' if is_new else '미점검'})
+            now_rows.append(observation)
+    # Replaying old revisions can grow history but cannot roll the current dashboard backward.
+    old_current=read_json(base/'current.json',{})
+    old_order=(old_current.get('meta',{}).get('snapshot_date',''),old_current.get('meta',{}).get('sequence',0))
+    update_current=(latest,sequence)>=old_order
+    active={r['event_id'] for r in (now_rows if update_current else old_current.get('today',[]))}
+    for eid,e in events.items():
+        explicit=dt(e.get('복구시각'))
+        e['상태']='복구' if explicit else '미복구 관측' if eid in active else '금일 미관측 · 복구 추정'
+    # Legacy values never enter rankings as verified contemporary observations.
+    summary={'today_total':len(now_rows),'today_new':sum(r['신규'] is True for r in now_rows),
+        'today_checked':sum(r['점검기재'] for r in now_rows),
+        'today_unchecked':sum(r['현장상태']=='미점검' for r in now_rows),
+        'raw_event_total':len(raw_events),'event_total':len(events),'snapshot_total':len(manifest['snapshots'])+(0 if known else 1),
+        'source_workbook_oos_rows':len(book['rows']),
+        'matched_today':sum(bool(r['알람']) for r in now_rows),
+        'repeated_ports':sum(n>1 for n in Counter((e['시스템'],e['Port']) for e in events.values()).values())}
+    current={'meta':{'schema_version':3,'snapshot_date':latest,'previous_date':book['prev'],
+         'generated_at':captured_at,'source_sha256':digest,'source_revision':revision,'sequence':sequence,
+         'archive_path':archive_rel,'observations_path':observation_rel,
+         'build_seconds':round(time.perf_counter()-started,3),'notes':book['notes'],
+         'raw_counts':book['raw_counts'],'raw_occurrence_dates':book['raw_dates'],
+         'rejected_rows':len(book['rejected']),
+         'legacy_import_files':len(copies),'legacy_dated_entries':sum(len(v) for k,v in legacy.items() if k!='_ports'),
+         'legacy_port_entries':len(legacy.get('_ports',{}))},'summary':summary,'today':now_rows,'sheets':book['aux']}
+    snapshot={'sequence':sequence,'sha256':digest,'snapshot_date':latest,'captured_at':captured_at,
+              'revision':revision,'archive_path':archive_rel,'observations_path':observation_rel,
+              'today_count':len(now_rows),'raw_counts':book['raw_counts']}
+    writes={}
+    if not known:
+        if (root/archive_rel).exists() and (root/archive_rel).read_bytes()!=content:raise ValueError('보관 원본 해시 충돌')
+        writes[root/archive_rel]=content
+        writes[root/observation_rel]=encode({'meta':current['meta'],'today':now_rows,'validation_exclusions':book['rejected']},True)
+        manifest['snapshots'].append(snapshot)
+    # Preserve exact old legacy files, including entries not found in this workbook.
+    for relative,raw in copies:
+        h=sha256(raw).hexdigest();path=root/f'archive/legacy/{h}.json'
+        if not path.exists():writes[path]=raw
+    writes[base/'manifest.json']=encode(manifest)
+    writes[base/'events.json.gz']=encode(store,True)
+    writes[base/'raw_events.json.gz']=encode(raw_store,True)
+    if update_current:writes[base/'current.json']=encode(current)
+    elif old_current:
+        old_current['summary']['event_total']=len(events)
+        old_current['summary']['raw_event_total']=len(raw_events)
+        old_current['summary']['snapshot_total']=len(manifest['snapshots'])
+        old_current['summary']['repeated_ports']=summary['repeated_ports']
+        writes[base/'current.json']=encode(old_current)
+    # Stage a validated complete file set; current.json is replaced last.
+    for path,raw in writes.items():atomic_bytes(path,raw)
+    return {'snapshot_date':latest,'events':len(events),'today':len(now_rows),'new_snapshot':not known,
+            'sha256':digest,'elapsed_seconds':round(time.perf_counter()-started,3),'current_bytes':len(encode(current)),'notes':book['notes']}
 
-def get_alarm_for_port(port,rf_map,du_map,cellmap,cache):
-    port=clean(port)
-    if port in cache: return cache[port]
-    cand=None
-    if port in cellmap: cand=cellmap[port]
-    if cand is None:
-        for cell,dr in cellmap.items():
-            if cell and port and (cell in port or port in cell):
-                cand=dr;break
-    if cand:
-        vals=rf_map.get(cand,set())
-        if vals:
-            res=best_alarm(vals);cache[port]=res;return res
-    du=port.rsplit('_',1)[0] if '_' in port and port.rsplit('_',1)[-1].isdigit() else port
-    res=best_alarm(du_map.get(du,set()))
-    cache[port]=res
-    return res
-
-def oos_alarm(row):
-    lv=clean(row.get('5G Link 알람'))
-    if lv and lv not in BAD:
-        return (lv.split(':',1)[-1].strip() if ':' in lv else lv),'OOS Link'
-    sp=clean(row.get('세부알람'))
-    if sp and sp not in BAD:return sp,'OOS 세부알람'
-    return '',''
-
-def classify_work(t):
-    s=clean(t)
-    if not s or s in BAD or s=='미복구':return ''
-    for kw,label in [('자동복구','자동복구'),('AAU','AAU 교체/수리'),('정류기','정류기'),('SFP','SFP'),('광점퍼','광점퍼'),('광케이블','광케이블'),('PSU','PSU'),('PRU','PRU'),('공중선','공중선'),('차단기','차단기'),('전원','전원'),('교체','기타 교체'),('복구','기타 복구')]:
-        if kw in s:return label
-    return '기타'
-
-def main():
-    if not FILE.exists():raise SystemExit('Missing daily workbook: data/daily.xlsx')
-    xls=pd.ExcelFile(FILE)
-    oos=load_sheet(xls,'5G_LTE OOS_진주')
-    if oos.empty:raise SystemExit('OOS worksheet is empty')
-    for required in ['본부','Port','발생시각']:
-        if required not in oos.columns:raise SystemExit(f'OOS missing mandatory column: {required}')
-    oos['기준일']=oos['본부'].map(datekey)
-    oos['Port']=oos['Port'].map(clean)
-    oos['발생시각']=oos['발생시각'].map(clean)
-    oos=oos.drop_duplicates(['Port','발생시각'],keep='last').copy()
-    dates=sorted(d for d in oos['기준일'].unique() if d)
-    if not dates:raise SystemExit('No valid snapshot date in OOS')
-    latest=dates[-1]
-    today=oos[oos['기준일']==latest].copy()
-    prev=dates[-2] if len(dates)>1 else None
-    prev_ports=set(oos.loc[oos['기준일']==prev,'Port']) if prev else set()
-    rf_map,du_map,cell_map=raw_alarm_mapping(xls)
-    cache={}
-    # Preserve old data! Existing history JSON may be copied from V1.
-    if HIST.exists():
-        try: history=json.loads(HIST.read_text('utf-8'))
-        except (json.JSONDecodeError,UnicodeDecodeError):
-            raise SystemExit('History JSON invalid - refusing to overwrite')
-        if not isinstance(history,dict): raise SystemExit('History JSON not an object - refusing to overwrite')
-    else:history={}
-    history.setdefault('_ports',{})
-    # Optional previous V1 archive takes priority for old dated records.
-    # Merge rather than replacing new history, so new V2 records remain safe.
-    if LEGACY.exists():
-        legacy=json.loads(LEGACY.read_text('utf-8'))
-        if not isinstance(legacy,dict):raise SystemExit('Invalid previous history archive')
-        for dk, entries in legacy.items():
-            if not isinstance(entries,dict):continue
-            existing=history.setdefault(dk,{})
-            for port, alarm in entries.items():
-                if alarm:existing[str(port)]=alarm
-    date_update_count=0
-    # Populate historical dates from OOS only if missing; never
-    # reassign CURRENT raw alarm to a past date.
-    for _,r in oos.iterrows():
-        dk=r['기준일'];port=r['Port']
-        if not dk or not port or dk==latest:continue  # latest day: RAW must take priority
-        al,_=oos_alarm(r)
-        if al and not history.setdefault(dk,{}).get(port):
-            history[dk][port]=al;date_update_count+=1
-    records=[]
-    today_ports=set(today['Port'])
-    for _,r in today.iterrows():
-        row=r.to_dict();port=clean(row.get('Port'))
-        raw=get_alarm_for_port(port,rf_map,du_map,cell_map,cache)
-        oos_val,oos_source=oos_alarm(row)
-        original=history.get(latest,{}).get(port,'')
-        alarm=raw or oos_val or original or history['_ports'].get(port,'')
-        source=('RAW' if raw else oos_source if oos_val else '저장이력' if alarm else '미확인')
-        # Preserve dated history when already present. Never overwrite known value.
-        if alarm and not original:
-            history.setdefault(latest,{})[port]=alarm;date_update_count+=1
-        # Latest port lookup may update, but NEVER use it to replace dated history.
-        if alarm: history['_ports'][port]=alarm
-        gj=clean(row.get('고장구분'))
-        state='점검·조치' if gj and gj not in BAD else '신규' if port not in prev_ports else '미점검'
-        records.append({key:clean(row.get(key)) for key in ['시스템','장비명','Port','시군구','발생시각','고장구분','복구/미복구 상세내역']}
-                       |{'알람':alarm,'알람근거':source,'현장상태':state})
-    # Generate historical view: never mutate old dated alarm values.
-    counts=Counter(oos['Port'])
-    all_rows=[]
-    for _,r in oos.sort_values('발생시각',ascending=False).iterrows():
-        row=r.to_dict();dk=row['기준일'];port=row['Port']
-        prior=history.get(dk,{}).get(port,'')
-        oos_val,_=oos_alarm(row)
-        alarm=prior or oos_val or history['_ports'].get(port,'') or ''
-        out={key:clean(row.get(key)) for key in ['본부','발생시각','장비명','Port','시스템','시군구','고장구분','복구/미복구 상세내역']}
-        out.update({'알람':alarm,'다발횟수':counts[port]})
-        all_rows.append(out)
-    trends=(oos.groupby('기준일').size().sort_index().tail(21))
-    recurrent=(oos.groupby('Port',dropna=False).agg(횟수=('발생시각','size'),최근발생=('발생시각','max'),장비명=('장비명','last')).reset_index())
-    recurrent=recurrent[recurrent['횟수']>1].sort_values('횟수',ascending=False).head(40)
-    work_count=Counter(filter(None,(classify_work(t) for t in oos.get('복구/미복구 상세내역',[]))))
-    sheets={}
-    for name in ['13시 알람 공유','중계기 및 MIBOS 알람','gREMS','RMS_A망 미복구','RMS_DACS 미복구','RMS_통합RCU미복구']:
-        sheets[name]=rowrecords(load_sheet(xls,name))
-    usable_days=[k for k,v in history.items() if k!='_ports' and isinstance(v,dict) and v]
-    summary={'today_total':len(records),'today_new':sum(r['현장상태']=='신규' for r in records),
-             'today_checked':sum(r['현장상태']=='점검·조치' for r in records),
-             'today_unchecked':sum(r['현장상태']=='미점검' for r in records),
-             'all_total':len(oos),'repeated_ports':sum(n>1 for n in counts.values()),'history_days':len(usable_days)}
-    result={'meta':{'snapshot_date':latest,'generated_at':datetime.now().strftime('%Y-%m-%d %H:%M'),
-                    'raw_count':sum(len(x) for x in [rf_map,du_map]),'added_history_entries':date_update_count},
-            'summary':summary,'today':records,'all_oos':all_rows,
-            'trends':[{'날짜':date,'건수':int(count)} for date,count in trends.items()],
-            'repeated':rowrecords(recurrent),'work_types':[{'작업유형':k,'건수':v} for k,v in work_count.most_common()],
-            'sheets':sheets}
-    OUT.write_text(json.dumps(result,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
-    HIST.write_text(json.dumps(history,ensure_ascii=False,indent=2),encoding='utf-8')
-    print(f'OK {latest}: {len(records)} today / {len(oos)} total / {len(usable_days)} history days / {date_update_count} added; JSON {OUT.stat().st_size//1024} KiB')
-
-if __name__=='__main__':main()
+if __name__=='__main__':
+    parser=argparse.ArgumentParser();parser.add_argument('--source');parser.add_argument('--root',default=str(ROOT));parser.add_argument('--revision',default='')
+    args=parser.parse_args()
+    print(json.dumps(build(args.root,args.source,args.revision),ensure_ascii=False,indent=2))

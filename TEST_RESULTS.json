@@ -1,0 +1,30 @@
+{
+  "ui_seconds_local_app_test": {
+    "initial": 1.444,
+    "금일 알람": 0.102,
+    "중계기 · MIBOS": 0.074,
+    "기타 알람": 0.066,
+    "OOS 이력": 0.156,
+    "보고서 · 알람 분석": 0.227,
+    "원본 · 저장 상태": 0.085,
+    "통합 현황": 0.222
+  },
+  "network": "blocked by mock; no UI network calls",
+  "history_regression_tests": 18,
+  "workbook_validation": {
+    "snapshot_date": "2026-11-06",
+    "today": 18,
+    "new": 7,
+    "checked": 9,
+    "unchecked": 2,
+    "oos_unique_occurrences": 1675,
+    "raw_unique_records": 3840,
+    "excluded_oos_rows": 1,
+    "current_payload_bytes": 62544,
+    "workbook_bytes": 7605308
+  },
+  "limitations": [
+    "Local AppTest timings exclude Streamlit Cloud startup, network and browser rendering.",
+    "Workflow persistence tested in temporary local Git repository; no external deployment or GitHub write performed."
+  ]
+}
